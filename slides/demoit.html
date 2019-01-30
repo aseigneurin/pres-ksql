@@ -1,0 +1,355 @@
+<div class="first_page">
+    <img src="/images/ksq-lrocket.jpg" style="float:right" height="400" />
+    <p class="main_title blue">KSQL</p>
+    <p class="secondary_title">The power of Kafka</p>
+    <p class="secondary_title">The simplicity of SQL</p>
+    <hr/>
+    <p class="secondary_title blue">Alexis Seigneurin - 2019</p>
+</div>
+
+---
+
+<h1>Me</h1>
+
+<div>
+<p>Data Engineer at <img src="/images/ippon.png" height="50"></p>
+<p>Kafka certified <img src="/images/certification-kafka.jpg" height="60"></p>
+<p>Run the Kafka Meetup: <a href="https://www.meetup.com/Apache-Kafka-NYC/">meetup.com/Apache-Kafka-NYC</a></p>
+</div>
+---
+
+<h1>Free e-book I wrote</h1>
+
+<div>
+    <img src="/images/ebook.png" style="float:right" height="700" />
+    <p>A guide to producing, consuming and processing events</p>
+    <p><a href="en.ippon.tech/apache-kafka">en.ippon.tech/apache-kafka</a></p>
+</div>
+
+---
+
+<h1>My blog</h1>
+
+<div>
+    <img src="/images/blog.png" style="float:right" height="700" />
+    <p><a href="aseigneurin.github.io">aseigneurin.github.io</a></p>
+</div>
+
+---
+
+<h1>Kafka: a few reminders</h1>
+
+<div>
+<img src="/images/kafka-logo-icon.png" style="float:right" height="400">
+<p>Publish-subscribe system</p>
+<p>Messages are published to <strong>topics</strong></p>
+<p>Messages are <strong>persisted</strong> (log)</p>
+<p>Messages can be read by multiple consumers</p>
+<p>Multiple partitions for scaling</p>
+<p style="text-align: center"><img src="/images/kafka-partitioned_log_0.png"></p>
+</div>
+
+---
+
+<h1>Producer and Consumer API (Java)</h1>
+
+<p>Low-level API</p>
+<p>Producer: <code>send()</code></p>
+<p>Consumer: <code>subscribe()</code>, <code>seek()</code>, <code>poll()</code>...</p>
+<p><strong>Consumer groups</strong></p>
+
+---
+
+<h1>Kafka Streams</h1>
+
+<p>Client library for Java and Scala</p>
+<p>DSL: <code>from()</code>, <code>map()</code>, <code>filter()</code>, <code>to()</code>...</p>
+<p>Aggregations, joins, windowing</p>
+<p>Simple deployment model</p>
+<p>Allows to create "microservices”</p>
+<p><strong>KStream</strong> / <strong>KTable</strong></p>
+
+---
+
+<h1>Kafka Streams: Quick example</h1>
+
+<img src="/images/kafka-streams-example.png">
+
+---
+
+<h1>Kafka Streams: KStream</h1>
+
+<p>KStream: stream of events</p>
+<p>Records are independent from each other</p>
+<p><strong>Stateless</strong></p>
+<p>E.g.: a payment of $20 for user X</p>
+
+---
+
+<h1>Kafka Streams: KTable</h1>
+
+<p>KTable: change log stream</p>
+<p>New records = updates</p>
+<p><strong>Stateful</strong> (requires a state store)</p>
+<p>E.g.: new account balance for user X</p>
+
+---
+
+<h1>KSQL</h1>
+
+<p>Open source / Confluent</p>
+<p>Built on top of Kafka Streams</p>
+<p>SQL queries translate into Kafka Streams applications</p>
+<ul>
+<li><code>CREATE STREAM</code> → KStream</li>
+<li><code>CREATE TABLE</code> → KTable</li>
+</ul>
+<p><i>Unbounded</i> queries</p>
+<p>Interactive or non-interactive queries</p>
+
+---
+
+<h1>WHICH API TO USE?</h1>
+
+<img src="/images/which-api.png">
+<p style="font-size: .6em; margin-top: 8em; text-align: center">
+    Source: <a href="https://docs.confluent.io/current/ksql/docs/concepts/ksql-and-kafka-streams.html">https://docs.confluent.io/current/ksql/docs/concepts/ksql-and-kafka-streams.html</a>
+</p>
+
+---
+
+<h1>KSQL</h1>
+
+<p>Works with structured data:</p>
+<ul>
+<li>Delimited</li>
+<li>JSON</li>
+<li>Avro (Schema Registry)</li>
+</ul>
+
+---
+
+<h1>KSQL: example</h1>
+
+<p>Movielens dataset</p>
+
+<link href="/css/prism.css" rel="stylesheet" />
+<p>Topic: movies</p>
+<pre><code class="language-json">{ "title":"Toy Story”, ”id”:"862", "imdb_id":"tt0114709", … }
+{ "title":"Full Metal Jacket”, "id”:”600”, ”imdb_id":"tt0093058", … }
+...
+</code></pre>
+<p>Topic: ratings</p>
+<pre><code class="language-json">{ "userId":"14", "movieId":"1287", "rating":2.0, "timestamp":1260759187}
+{"userId”:”28", "movieId":"862", "rating":2.0, "timestamp":1260759148}
+{"userId”:”7", "movieId":"1339", "rating":3.5, "timestamp":1260759125}
+...
+</code></pre>
+<script src="/js/prism.js"></script>
+
+---
+
+<link href="/css/prism.css" rel="stylesheet" />
+<h1>KTable of Movies</h1>
+<div class="split">
+<div>
+<pre><code class="language-sql">$ consume movies
+    
+CREATE TABLE movies ( \
+    adult VARCHAR, \
+    belongs_to_collection VARCHAR, \
+    budget VARCHAR, \
+    genres VARCHAR, \
+    homepage VARCHAR, \
+    id VARCHAR, \
+    imdb_id VARCHAR, \
+    original_language VARCHAR, \
+    original_title VARCHAR, \
+    overview VARCHAR, \
+    popularity VARCHAR, \
+    poster_path VARCHAR, \
+    production_companies VARCHAR, \
+    production_countries VARCHAR, \
+    release_date VARCHAR, \
+    revenue VARCHAR, \
+    runtime VARCHAR, \
+    spoken_languages VARCHAR, \
+    status VARCHAR, \
+    tagline VARCHAR, \
+    title VARCHAR, \
+    video VARCHAR, \
+    vote_average VARCHAR, \
+    vote_count VARCHAR) \
+WITH (KAFKA_TOPIC = 'movies', \
+    VALUE_FORMAT='JSON', \
+    KEY = 'id');
+
+SHOW TABLES;
+
+DESCRIBE EXTENDED movies;
+
+SELECT ID, TITLE FROM MOVIES WHERE TITLE LIKE 'Toy %';
+</code></pre>
+</div>
+<web-term path=""></web-term>
+</div>
+<script src="/js/prism.js"></script>
+
+---
+
+<link href="/css/prism.css" rel="stylesheet" />
+<h1>KStream of Ratings</h1>
+<div class="split">
+<div>
+<pre><code class="language-sql">CREATE STREAM ratings ( \
+        userId VARCHAR, \
+        movieId VARCHAR, \
+        rating DOUBLE, \
+        timestamp BIGINT \
+      ) \
+WITH (KAFKA_TOPIC = 'ratings', VALUE_FORMAT='JSON');
+
+DESCRIBE EXTENDED ratings;
+
+SELECT USERID, MOVIEID, RATING FROM RATINGS;
+</code></pre>
+</div>
+<web-term path=""></web-term>
+</div>
+<script src="/js/prism.js"></script>
+
+---
+
+<link href="/css/prism.css" rel="stylesheet" />
+<h1>Join Ratings with Movies</h1>
+<div class="split">
+<div>
+<pre><code class="language-sql">SELECT USERID, MOVIEID, TITLE, RATING \
+FROM RATINGS \
+LEFT JOIN MOVIES ON RATINGS.MOVIEID = MOVIES.ID;
+</code></pre>
+</div>
+<web-term path=""></web-term>
+</div>
+<script src="/js/prism.js"></script>
+
+---
+
+<link href="/css/prism.css" rel="stylesheet" />
+<h1>Query running in the background</h1>
+<div class="split">
+<div>
+<pre><code class="language-sql">CREATE STREAM ratings_enriched \
+WITH (KAFKA_TOPIC = 'ratings_enriched', VALUE_FORMAT='JSON') \
+AS SELECT USERID, MOVIEID, TITLE, RATING \
+FROM RATINGS \
+LEFT JOIN MOVIES ON RATINGS.MOVIEID = MOVIES.ID;
+
+EXPLAIN CSAS_RATINGS_ENRICHED_0;
+
+-- Kill the KSQL CLI...
+-- $ consume ratings_enriched
+-- Restart the KSQL CLI...
+
+TERMINATE CSAS_RATINGS_ENRICHED_0;
+DROP STREAM ratings_enriched;
+</code></pre>
+</div>
+<web-term path=""></web-term>
+</div>
+<script src="/js/prism.js"></script>
+
+---
+
+<h1>Windowed aggregations</h1>
+
+<p>Windows: tumbling, hopping, session</p>
+<p>Functions: <code>WINDOWSTART()</code> and <code>WINDOWEND()</code></p>
+<p></p>
+<img src="/images/ksql-window-aggregation.png" height="600">
+
+---
+
+<link href="/css/prism.css" rel="stylesheet" />
+<h1>Windowed aggregations</h1>
+<div class="split">
+<div>
+<pre><code class="language-shell">$ consume events</code></pre>
+<pre><code class="language-sql">CREATE STREAM events ( \
+        id VARCHAR, \
+        info VARCHAR, \
+        source VARCHAR, \
+        userid BIGINT
+      ) \
+WITH (KAFKA_TOPIC = 'events', VALUE_FORMAT='JSON');
+
+SELECT * FROM EVENTS;
+
+SELECT \
+    SOURCE, \
+    WINDOWSTART(), \
+    WINDOWEND(), \
+    COUNT(*) \
+    FROM EVENTS \
+    WINDOW TUMBLING(SIZE 5 SECONDs) \
+    GROUP BY SOURCE;
+
+SELECT \
+    SOURCE, \
+    TIMESTAMPTOSTRING(WINDOWSTART(), 'yyyy-MM-dd HH:mm:ss'), \
+    TIMESTAMPTOSTRING(WINDOWEND(), 'yyyy-MM-dd HH:mm:ss'), \
+    COUNT(*) \
+    FROM EVENTS \
+    WINDOW TUMBLING(SIZE 5 SECONDs) \
+    GROUP BY SOURCE;
+</code></pre>
+</div>
+<web-term path=""></web-term>
+</div>
+<script src="/js/prism.js"></script>
+
+---
+
+<h1>Windowed aggregations</h1>
+
+<p>Support for late events</p>
+<p>Event time vs Processing time</p>
+
+<pre><code style="font-size: 2em; color:black">
+|    t1    |    t2    |    t3    |    ...
+|* *  * *  |**   *    | * *** * *|    ...
+</code></pre>
+
+<pre><code style="font-size: 2em; color:black">
+|    t1    |    t2    |    t3    |    ...
+|* *  * .  |**   *    | * *** * *|    ...
+        \- - -&gt; *(t1)
+</code></pre>
+
+---
+
+<h1>Deployment options</h1>
+
+<p>Interactive: KSQL CLI</p>
+<p>Non-interactive:</p>
+<pre style="font-size: 1em; margin-left:50px">
+    <code>ksql-server-start /path/to/ksql-server.properties --queries-file query.sql</code>
+</pre>
+<img src="/images/deployment.png" width="600" style="margin-top:3em">
+
+---
+
+<h1>Wrapping up</h1>
+
+<p>Streaming SQL engine</p>
+<p>Tables + Streams</p>
+<p>Windowed aggregations</p>
+<p>Interactive vs non-interactive</p>
+
+---
+<div class="first_page">
+    <p class="main_title blue">Thanks!</p>
+    <hr/>
+    <p class="blue">@aseigneurin</p>
+    <p class="blue"><a href="aseigneurin.github.io">aseigneurin.github.io</a></p>
+</div>
